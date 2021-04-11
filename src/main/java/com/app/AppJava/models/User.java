@@ -1,9 +1,12 @@
 package com.app.AppJava.models;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,9 +18,12 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
-      @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreationTimestamp
+    private Date dateCreated;
 
     @NotBlank
     @Size(max = 20)
@@ -32,6 +38,9 @@ public class User {
     @Size
     private String password;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private UserInformation userInformation;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -41,7 +50,9 @@ public class User {
     public User() {
     }
 
-    public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) String email, @NotBlank @Size String password) {
+    public User(@NotBlank @Size(max = 20) String username,
+                @NotBlank @Size(max = 50) String email,
+                @NotBlank @Size String password) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -91,12 +102,29 @@ public class User {
         this.roles = roles;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public UserInformation getUserInformation() {
+        return userInformation;
+    }
+
+    public void setUserInformation(UserInformation userInformation) {
+        this.userInformation = userInformation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(id, user.id) &&
+                Objects.equals(dateCreated, user.dateCreated) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
@@ -105,6 +133,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, email, password, roles);
+        return Objects.hash(id, dateCreated, username, email, password, roles);
     }
 }

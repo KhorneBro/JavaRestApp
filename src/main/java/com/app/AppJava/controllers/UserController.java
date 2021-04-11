@@ -16,8 +16,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
     UserService userService;

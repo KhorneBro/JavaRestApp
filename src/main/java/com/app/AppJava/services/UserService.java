@@ -48,7 +48,6 @@ public class UserService {
             return new MessageResponse("Roles can't be empty");
         }
 
-
         return new MessageResponse("Ok");
     }
 
